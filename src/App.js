@@ -1,26 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, Fragment, useState } from 'react';
 import './App.css';
 
-function App() {
+const { ipcRenderer } = window.require('electron');
+
+const App = () => {
+  const [summonerName, setSummonerName] = useState('');
+  const [summonerIcon, setSummonerIcon] = useState('');
+
+  useEffect(() => {
+    console.log('App Mounted');
+    ipcRenderer.on('Electron-finished-loading', (event, arg) => {
+      console.log(arg);
+    });
+    ipcRenderer.on('summoner-data', (event, arg) => {
+      console.log(arg);
+      setSummonerName(arg.displayName);
+      setSummonerIcon(arg.profileIconId);
+    });
+  });
+
+  const buttonHandle = () => {
+    console.log('Button Handle!');
+    ipcRenderer.send('button-click', 'Button Handle Arg Electron');
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Fragment>
+      <p>Test!</p>
+      <p>{summonerName}</p>
+      <img
+        src={`http://ddragon.leagueoflegends.com/cdn/10.11.1/img/profileicon/${summonerIcon}.png`}
+        alt='summoner-icon'
+      />
+      <button onClick={buttonHandle}>Test Button!</button>
+    </Fragment>
   );
-}
+};
 
 export default App;
