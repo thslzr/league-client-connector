@@ -3,14 +3,16 @@ const path = require('path');
 const isDev = require('electron-is-dev');
 const LCUConnector = require('lcu-connector');
 const got = require('got');
+const { autoUpdater } = require('electron-updater');
 
 const connector = new LCUConnector('');
 
 let clientData = {};
+let win;
 
 function createWindow() {
   // Create the browser window.
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -64,6 +66,8 @@ function createWindow() {
     win.webContents.send('summoner-data', JSON.parse(response.body));
     console.log(response);
   });
+
+  autoUpdater.checkForUpdatesAndNotify();
 }
 
 // This method will be called when Electron has finished
@@ -90,3 +94,13 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+autoUpdater.on('update-available', () => {
+  win.webContents.send('update_available');
+});
+autoUpdater.on('update-downloaded', () => {
+  win.webContents.send('update_downloaded');
+});
+
+ipcMain.on('restart_app', () => {
+  autoUpdater.quitAndInstall();
+});

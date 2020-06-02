@@ -6,6 +6,7 @@ const { ipcRenderer } = window.require('electron');
 const App = () => {
   const [summonerName, setSummonerName] = useState('');
   const [summonerIcon, setSummonerIcon] = useState('');
+  const [updateMessage, setUpdateMessage] = useState('');
 
   useEffect(() => {
     console.log('App Mounted');
@@ -17,6 +18,14 @@ const App = () => {
       setSummonerName(arg.displayName);
       setSummonerIcon(arg.profileIconId);
     });
+    ipcRenderer.on('update_available', () => {
+      console.log('Update available');
+      setUpdateMessage('Downloading update...');
+    });
+    ipcRenderer.on('update_downloaded', () => {
+      console.log('Update downloaded');
+      ipcRenderer.send('restart_app');
+    });
   });
 
   const buttonHandle = () => {
@@ -26,13 +35,14 @@ const App = () => {
 
   return (
     <Fragment>
-      <p>Test!</p>
+      <p>Test! v1.0.3</p>
       <p>{summonerName}</p>
       <img
         src={`http://ddragon.leagueoflegends.com/cdn/10.11.1/img/profileicon/${summonerIcon}.png`}
         alt='summoner-icon'
       />
       <button onClick={buttonHandle}>Test Button!</button>
+      <p>{updateMessage}</p>
     </Fragment>
   );
 };
