@@ -9,6 +9,7 @@ const connector = new LCUConnector('');
 
 let clientData = {};
 let win;
+let auth;
 
 function createWindow() {
   // Create the browser window.
@@ -32,10 +33,6 @@ function createWindow() {
 
   win.webContents.on('did-finish-load', () => {
     console.log('Electron-finished-loading');
-    win.webContents.send(
-      'Electron-finished-loading',
-      'Test send function from electron'
-    );
     connector.on('connect', async (lcuInfo) => {
       clientData = {
         username: lcuInfo.username,
@@ -43,30 +40,27 @@ function createWindow() {
         address: lcuInfo.address,
         port: lcuInfo.port,
       };
+
+      auth =
+        'Basic ' +
+        Buffer.from(`${clientData.username}:${clientData.password}`).toString(
+          'base64'
+        );
+      // /lol-summoner/v1/current-summoner/summoner-profile
+      const response = await got.get(
+        `https://${clientData.address}:${clientData.port}/lol-summoner/v1/current-summoner`,
+        {
+          headers: {
+            Authorization: auth,
+          },
+          rejectUnauthorized: false,
+        }
+      );
+      console.log(response.body);
+      win.webContents.send('summoner-data', JSON.parse(response.body));
     });
     connector.start();
   });
-
-  ipcMain.on('button-click', async (event, arg) => {
-    const auth =
-      'Basic ' +
-      new Buffer(`${clientData.username}:${clientData.password}`).toString(
-        'base64'
-      );
-
-    const response = await got.get(
-      `https://${clientData.address}:${clientData.port}/lol-summoner/v1/current-summoner`,
-      {
-        headers: {
-          Authorization: auth,
-        },
-        rejectUnauthorized: false,
-      }
-    );
-    win.webContents.send('summoner-data', JSON.parse(response.body));
-    console.log(response);
-  });
-
   autoUpdater.checkForUpdatesAndNotify();
 }
 

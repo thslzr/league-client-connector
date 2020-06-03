@@ -26,7 +26,7 @@ const App = () => {
       console.log('Update downloaded');
       ipcRenderer.send('restart_app');
     });
-  });
+  }, []);
 
   const buttonHandle = () => {
     console.log('Button Handle!');
@@ -38,7 +38,7 @@ const App = () => {
       <p>Test! v1.0.3</p>
       <p>{summonerName}</p>
       <img
-        src={`http://ddragon.leagueoflegends.com/cdn/10.11.1/img/profileicon/${summonerIcon}.png`}
+        src={`https://cdn.communitydragon.org/10.11.1/profile-icon/${summonerIcon}`}
         alt='summoner-icon'
       />
       <button onClick={buttonHandle}>Test Button!</button>
