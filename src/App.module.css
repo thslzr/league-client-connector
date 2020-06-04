@@ -1,0 +1,24 @@
+.backgroundImage {
+  width: 100vw;
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(5px);
+}
+
+.summonerCard {
+  display: flex;
+  width: 70vw;
+  height: 30vh;
+  background-color: darkgray;
+  position: absolute;
+  top: 200px;
+  left: 125px;
+  justify-content: space-evenly;
+}
+
+.summonerCardImage {
+  width: 150px;
+  height: 150px;
+}

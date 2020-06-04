@@ -46,8 +46,9 @@ function createWindow() {
         Buffer.from(`${clientData.username}:${clientData.password}`).toString(
           'base64'
         );
-      // /lol-summoner/v1/current-summoner/summoner-profile
-      const response = await got.get(
+
+      // Get summoners basic info
+      const summonerLogin = await got.get(
         `https://${clientData.address}:${clientData.port}/lol-summoner/v1/current-summoner`,
         {
           headers: {
@@ -56,8 +57,23 @@ function createWindow() {
           rejectUnauthorized: false,
         }
       );
-      console.log(response.body);
-      win.webContents.send('summoner-data', JSON.parse(response.body));
+      win.webContents.send('summonerLogin', JSON.parse(summonerLogin.body));
+
+      // Get summoners profile information
+      // /lol-summoner/v1/current-summoner/summoner-profile
+      const summonersProfileInfo = await got.get(
+        `https://${clientData.address}:${clientData.port}/lol-summoner/v1/current-summoner/summoner-profile`,
+        {
+          headers: {
+            Authorization: auth,
+          },
+          rejectUnauthorized: false,
+        }
+      );
+      win.webContents.send(
+        'summonersProfileInfo',
+        JSON.parse(summonersProfileInfo.body)
+      );
     });
     connector.start();
   });

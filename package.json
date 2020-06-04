@@ -1,6 +1,6 @@
 {
   "name": "league-client-connector",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "public/electron.js",
   "build": {
     "appId": "league-client-connector.connector",
