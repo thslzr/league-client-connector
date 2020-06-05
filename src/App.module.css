@@ -9,19 +9,3 @@
   margin: 0px -10px 0px 0px;
   transform: scale(1.1);
 }
-
-.summonerCard {
-  display: flex;
-  width: 70vw;
-  height: 30vh;
-  background-color: darkgray;
-  position: absolute;
-  top: 200px;
-  left: 125px;
-  justify-content: space-evenly;
-}
-
-.summonerCardImage {
-  width: 150px;
-  height: 150px;
-}

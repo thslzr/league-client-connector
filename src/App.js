@@ -1,16 +1,12 @@
 import React, { useEffect, useState, Fragment } from 'react';
+import SummonersCardInfo from './containers/layouts/summonerCardInfo/SummonerCardInfo';
 import { getChampionId, getSkinId } from './utils/getSummonerBackground';
-import { getRankLogo } from './utils/getRankLogo';
 import classes from './App.module.css';
-
 const { ipcRenderer } = window.require('electron');
 
 const App = () => {
   const [championId, setChampionId] = useState('');
   const [skinId, setSkinId] = useState('');
-  const [profilePicture, setProfilePicture] = useState('');
-  const [soloRank, setSoloRank] = useState({});
-  const [flexRank, setFlexRank] = useState({});
 
   useEffect(() => {
     console.log('App Mounted');
@@ -21,15 +17,7 @@ const App = () => {
       setChampionId(getChampionId(arg.backgroundSkinId));
       setSkinId(getSkinId(arg.backgroundSkinId));
     });
-    ipcRenderer.on('summonerLogin', (event, arg) => {
-      setProfilePicture(arg.profileIconId);
-    });
-    ipcRenderer.on('summonerRankInfo', (event, arg) => {
-      setSoloRank(arg.queueMap.RANKED_SOLO_5x5);
-      setFlexRank(arg.queueMap.RANKED_FLEX_SR);
-    });
-  }, []);
-
+  });
   return (
     <Fragment>
       <div
@@ -40,21 +28,8 @@ const App = () => {
             `https://cdn.communitydragon.org/latest/champion/${championId}/splash-art/centered/skin/${skinId}` +
             ')',
         }}
-      ></div>
-      <div className={classes.summonerCard}>
-        <img
-          className={classes.summonerCardImage}
-          src={`https://cdn.communitydragon.org/latest/profile-icon/${profilePicture}`}
-        />
-        <img
-          className={classes.summonerCardImage}
-          src={getRankLogo(soloRank.tier)}
-        />
-        <img
-          className={classes.summonerCardImage}
-          src={getRankLogo(flexRank.tier)}
-        />
-      </div>
+      />
+      <SummonersCardInfo />;
     </Fragment>
   );
 };
