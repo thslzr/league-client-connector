@@ -16,10 +16,13 @@ function createWindow() {
   win = new BrowserWindow({
     width: 800,
     height: 600,
+    resizable: false,
     webPreferences: {
       nodeIntegration: true,
     },
   });
+
+  win.removeMenu();
 
   // and load the index.html of the app.
   win.loadURL(
@@ -60,7 +63,6 @@ function createWindow() {
       win.webContents.send('summonerLogin', JSON.parse(summonerLogin.body));
 
       // Get summoners profile information
-      // /lol-summoner/v1/current-summoner/summoner-profile
       const summonersProfileInfo = await got.get(
         `https://${clientData.address}:${clientData.port}/lol-summoner/v1/current-summoner/summoner-profile`,
         {
@@ -73,6 +75,20 @@ function createWindow() {
       win.webContents.send(
         'summonersProfileInfo',
         JSON.parse(summonersProfileInfo.body)
+      );
+
+      const summonerRankInfo = await got.get(
+        `https://${clientData.address}:${clientData.port}/lol-ranked/v1/current-ranked-stats`,
+        {
+          headers: {
+            Authorization: auth,
+          },
+          rejectUnauthorized: false,
+        }
+      );
+      win.webContents.send(
+        'summonerRankInfo',
+        JSON.parse(summonerRankInfo.body)
       );
     });
     connector.start();
